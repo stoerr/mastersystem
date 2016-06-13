@@ -4,29 +4,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.regex.*;
 
 public class NumberMemogenerator {
 
-    /** Logger for NumberMemogenerator */
-    private static final org.apache.commons.logging.Log LOG = org.apache.commons.logging.LogFactory
-            .getLog(NumberMemogenerator.class);
-
-    Pattern Word = Pattern.compile("[a-zA-ZäöüÄÖÜß]+");
+    private Pattern Word = Pattern.compile("[a-zA-ZäöüÄÖÜß]+");
 
     private Pattern R0 = Pattern.compile("(x+|z+|s+(?!ch)|ß+)");
 
     private Pattern R1 = Pattern.compile("([td]+)");
 
-    private Pattern R2 = Pattern.compile("(n+)");
+    private Pattern R2 = Pattern.compile("([nñ]+)");
 
     private Pattern R3 = Pattern.compile("(m+)");
 
@@ -42,30 +34,35 @@ public class NumberMemogenerator {
 
     private Pattern R9 = Pattern.compile("([pb]+)");
 
-    Pattern AnyDigit = Pattern.compile("(" + R0 + "|" + R1 + "|" + R2 + "|"
+    private Pattern AnyDigit = Pattern.compile("(" + R0 + "|" + R1 + "|" + R2 + "|"
             + R3 + "|" + R4 + "|" + R5 + "|" + R6 + "|" + R7 + "|" + R8 + "|"
             + R9 + ")");
 
-    Pattern Vocal = Pattern.compile("([aeiouäöüyh]+)");
+    private Pattern Ignored = Pattern.compile("([aeiouäöüAEUIOÄÖÜyhéâêà.' -]+)");
 
-    private Pattern[] Digits = new Pattern[] { R0, R1, R2, R3, R4, R5, R6, R7, R8, R9 };
+    private Pattern[] Digits = new Pattern[]{R0, R1, R2, R3, R4, R5, R6, R7, R8, R9};
 
-    Pattern MatchableWord = Pattern.compile("(" + Vocal + ")?(" + Vocal
-            + AnyDigit + ")*");
+    private Pattern MatchableWord = Pattern.compile("(" + Ignored + "|" + AnyDigit + ")*", Pattern.CASE_INSENSITIVE);
+
+    private Pattern JSonWord = Pattern.compile("\"" + MatchableWord + "\",", Pattern.CASE_INSENSITIVE);
 
     /**
      * @param args
      */
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
+    public static void main(String[] args) throws Exception {
+        NumberMemogenerator g = new NumberMemogenerator();
+        /* Files.lines(Paths.get("wordlists", "allde.json"), Charset.forName("ISO8859-1"))
+                .filter((l) -> g.JSonWord.matcher(l).matches()).limit(10).forEach(System.out::println); */
+        System.out.println("\n\n\nNot Matching:\n");
+        Files.lines(Paths.get("wordlists", "allen.json"), Charset.forName("ISO8859-1"))
+                .filter((l) -> !g.JSonWord.matcher(l).matches()).forEach(System.out::println);
     }
 
     public List<String> getWords(String number) throws IOException {
         Pattern pat = numberPattern(number);
         List<String> words = getWordList();
         List<String> res = new ArrayList<String>();
-        for (Iterator<String> iter = words.iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = words.iterator(); iter.hasNext(); ) {
             String w = (String) iter.next();
             if (pat.matcher(w).matches()) {
                 res.add(w);
@@ -76,9 +73,9 @@ public class NumberMemogenerator {
 
     public void printWords(String number) throws IOException {
         Pattern pat = numberPattern(number);
-        LOG.debug("number " + number + " has pattern " + pat);
+        System.out.println("number " + number + " has pattern " + pat);
         List<String> words = getWordList();
-        for (Iterator<String> iter = words.iterator(); iter.hasNext();) {
+        for (Iterator<String> iter = words.iterator(); iter.hasNext(); ) {
             String w = (String) iter.next();
             if (pat.matcher(w).matches()) {
                 System.out.println(number + "=\t" + w + ", decoded: "
@@ -88,10 +85,10 @@ public class NumberMemogenerator {
     }
 
     Pattern numberPattern(String number) {
-        String regex = "(?i)(" + Vocal + ")?";
+        String regex = "(?i)(" + Ignored + ")?";
         for (int i = 0; i < number.length(); ++i) {
             int z = Integer.parseInt(String.valueOf(number.charAt(i)));
-            regex = regex + Digits[z] + "(" + Vocal + ")?";
+            regex = regex + Digits[z] + "(" + Ignored + ")?";
         }
         Pattern pat = Pattern.compile(regex + "?");
         return pat;
