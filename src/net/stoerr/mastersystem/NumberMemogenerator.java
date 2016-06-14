@@ -51,10 +51,10 @@ public class NumberMemogenerator {
      */
     public static void main(String[] args) throws Exception {
         NumberMemogenerator g = new NumberMemogenerator();
-        /* Files.lines(Paths.get("wordlists", "allde.json"), Charset.forName("ISO8859-1"))
+        /* Files.lines(Paths.get("html", "allde.json"), Charset.forName("ISO8859-1"))
                 .filter((l) -> g.JSonWord.matcher(l).matches()).limit(10).forEach(System.out::println); */
         System.out.println("\n\n\nNot Matching:\n");
-        Files.lines(Paths.get("wordlists", "allen.json"), Charset.forName("ISO8859-1"))
+        Files.lines(Paths.get("html", "allen.json"), Charset.forName("ISO8859-1"))
                 .filter((l) -> !g.JSonWord.matcher(l).matches()).forEach(System.out::println);
     }
 
