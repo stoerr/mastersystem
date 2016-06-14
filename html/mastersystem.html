@@ -66,14 +66,16 @@ ha
         "8":"(f+|v+|w+|ph)",
         "9":"([pb]+)"
     }
+    var result = $("#result");
     var ignorePattern = "([aeiouäöüAEUIOÄÖÜyhéâêà.' -]*)";
+    result.text("Einen Moment: Wörter werden geladen...");
     $.getJSON( datalocation, function( data ) {
         words = data;
         $("#search").removeAttr("disabled");
         if (console) console.log("loaded " + words.length + " words." );
+        result.text(words.length + " Wörter geladen.");
     });
     function search() {
-        var result = $("#result");
         result.text("");
         var num = $("#num").val();
         var regex = ignorePattern;
