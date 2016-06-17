@@ -2,8 +2,8 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Mastersystem encoder</title>
     <meta charset="utf-8">
+    <title>Mastersystem encoder</title>
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/united/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -12,9 +12,7 @@
     <div class="container text-center"><h1>Master system encoder</h1>
                 <p>Blabla.
                 </p>
-                <img style="height: 350px;"
-                     src="Mastersystem.jpg">
-        </div>
+                <img style="height: 350px;" src="Mastersystem.jpg" alt="Tabelle zum Mastersystem">
     </div>
 </div>
 
@@ -49,8 +47,8 @@ ha
     </div>
 </div>
 
-<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     var datalocation = "allde.json"; // "somewords.json";
     var words = [];
@@ -65,7 +63,8 @@ ha
         "7":"(k+|ck|g+|c+(?!h)|c+(?!h)k+|q+|x+)",
         "8":"(f+|v+|w+|ph)",
         "9":"([pb]+)"
-    }
+    };
+
     var result = $("#result");
     var ignorePattern = "([aeiouäöüAEUIOÄÖÜyhéâêà.' -]*)";
     result.text("Einen Moment: Wörter werden geladen...");
@@ -75,29 +74,38 @@ ha
         if (console) console.log("loaded " + words.length + " words." );
         result.text(words.length + " Wörter geladen.");
     });
+
+    var errors;
+
     function search() {
-        result.text("");
+        result.text(errors);
         var num = $("#num").val();
-        var regex = ignorePattern;
         if (console) console.log("Number:" + num);
-        var errors = "";
+        var matchingwords = allmatches(num);
+        if ("" != errors) {
+            result.text(errors);
+        } else {
+            result.text(matchingwords.join("\n"))
+        }
+    }
+
+    function allmatches(num) {
+        errors = "";
+        var regex = ignorePattern;
         $.each(num.split(""), function(idx, c) {
             var cpattern = patterns[c];
             if (null == cpattern) errors = errors + ("Can't find pattern for " + c + "\n");
             else regex = regex + cpattern + ignorePattern;
         });
-        if ("" != errors) {
-            result.text(errors);
-        } else {
-            var rxp = new RegExp("^" + regex + "$", "i")
-            if(console) console.log("Searching for " + rxp);
-            var matchingwords = []
-            $.each(words, function(idx, word) {
-                if(rxp.test(word)) matchingwords.push(word);
-            });
-            result.text(matchingwords.join("\n"))
-            if(console) console.log("found " + matchingwords.length + " words");
-        }
+        if ("" != errors) return undefined;
+
+        var rxp = new RegExp("^" + regex + "$", "i");
+        var matchingwords = [];
+        $.each(words, function(idx, word) {
+            if(rxp.test(word)) matchingwords.push(word);
+        });
+        if(console) console.log("found " + matchingwords.length + " words for " + rxp);
+        return matchingwords;
     }
 </script>
 </body>
