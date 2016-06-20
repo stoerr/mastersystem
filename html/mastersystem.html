@@ -114,7 +114,7 @@ ha
         $.each(words, function(idx, word) {
             if(rxp.test(word)) matchingwords.push(word);
         });
-        if(console) console.log("found " + matchingwords.length + " words for " + rxp);
+        if(console) console.log("found " + matchingwords.length + " words for " + num + " : " + rxp);
         return matchingwords;
     }
 
@@ -131,12 +131,12 @@ ha
         if(!num) {
             if(startTDs) {
                 var tbl = "<table><tr>" + startTDs + "</tr></table>";
-                console.log(tbl);
+                if(console) console.log(tbl);
                 splitresults.append(tbl);
                 return;
             }
         }
-        for(var i=0; i < num.length; ++i) {
+        for(var i=1; i < num.length; ++i) {
             var contnum = num.substring(0, num.length - i);
             var endnum = num.substring(num.length - i, num.length);
             var contTDs = matchTD(contnum);
