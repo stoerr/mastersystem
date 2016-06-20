@@ -41,6 +41,8 @@ hu
 ha
                         </pre>
                     </div>
+                    <div class="form-group" id="splitresults">
+                    </div>
                 </div>
             </div>
         </div>
@@ -66,6 +68,8 @@ ha
     };
 
     var result = $("#result");
+    var splitresults = $("#splitresults");
+    var round = 0;
     var ignorePattern = "([aeiouäöüAEUIOÄÖÜyhéâêà.' -]*)";
     result.text("Einen Moment: Wörter werden geladen...");
     $.getJSON( datalocation, function( data ) {
@@ -78,7 +82,10 @@ ha
     var errors;
 
     function search() {
-        result.text(errors);
+        errors = "";
+        result.text("");
+        splitresults.text("");
+        round = 0;
         var num = $("#num").val();
         if (console) console.log("Number:" + num);
         var matchingwords = allmatches(num);
@@ -87,8 +94,11 @@ ha
         } else {
             result.text(matchingwords.join("\n"))
         }
+
+        searchSplits(num, " ");
     }
 
+    // returns (possibly empty) array of matches or undefined, if there are no matches
     function allmatches(num) {
         errors = "";
         var regex = ignorePattern;
@@ -106,6 +116,32 @@ ha
         });
         if(console) console.log("found " + matchingwords.length + " words for " + rxp);
         return matchingwords;
+    }
+
+    // returns <td><pre>(matches)<pre></td>
+    function matchTD(num) {
+        var matches = allmatches(num);
+        if (matches) return "<td><pre>" + matches.join("\n") + "</pre></td>";
+        else return undefined;
+    }
+
+    function searchSplits(num, startTDs) {
+        if (round > 100) { alert('100 rounds - aborting'); return; }
+        round = round + 1;
+        if(!num) {
+            if(startTDs) {
+                var tbl = "<table><tr>" + startTDs + "</tr></table>";
+                console.log(tbl);
+                splitresults.append(tbl);
+                return;
+            }
+        }
+        for(var i=0; i < num.length; ++i) {
+            var contnum = num.substring(0, num.length - i);
+            var endnum = num.substring(num.length - i, num.length);
+            var contTDs = matchTD(contnum);
+            searchSplits(endnum, startTDs + contTDs);
+        }
     }
 </script>
 </body>
