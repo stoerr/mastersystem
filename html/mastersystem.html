@@ -114,33 +114,33 @@ ha
         $.each(words, function(idx, word) {
             if(rxp.test(word)) matchingwords.push(word);
         });
-        if(console) console.log("found " + matchingwords.length + " words for " + num + " : " + rxp);
+        if(console) console.log("found " + matchingwords.length + " words for " + num);
         return matchingwords;
     }
 
     // returns <td><pre>(matches)<pre></td>
     function matchTD(num) {
         var matches = allmatches(num);
-        if (matches) return "<td><pre>" + matches.join("\n") + "</pre></td>";
+        if (matches.length > 0) return "<td valign='top'><pre>" + num + "\n" + matches.join("\n") + "</pre></td>";
         else return undefined;
     }
 
     function searchSplits(num, startTDs) {
-        if (round > 100) { alert('100 rounds - aborting'); return; }
+        if (round > 1000) { alert('1000 rounds - aborting'); return; }
         round = round + 1;
         if(!num) {
             if(startTDs) {
-                var tbl = "<table><tr>" + startTDs + "</tr></table>";
-                if(console) console.log(tbl);
+                var tbl = "<table border='1'><tr>" + startTDs + "</tr></table>";
+                if(console) console.log("Created table " + tbl);
                 splitresults.append(tbl);
                 return;
             }
         }
-        for(var i=1; i < num.length; ++i) {
+        for(var i=0; i < num.length; ++i) {
             var contnum = num.substring(0, num.length - i);
             var endnum = num.substring(num.length - i, num.length);
             var contTDs = matchTD(contnum);
-            searchSplits(endnum, startTDs + contTDs);
+            if (contTDs) searchSplits(endnum, startTDs + contTDs);
         }
     }
 </script>
