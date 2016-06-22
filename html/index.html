@@ -23,7 +23,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 col-md-9"><h2>Kodierung einer Zahl im Master-System</h2>
+        <div class="col-sm-12 col-md-12"><h2>Kodierung einer Zahl im Master-System</h2>
 
             <div class="well text-center">
                 <div class="form-group"><label for="num">Zu kodierende Zahl:</label>
@@ -45,7 +45,10 @@
                             Kein Javascript aktiviert -> nix geht hier.
                         </pre>
                     </div>
-                    <div class="form-group" id="splitresults">
+                    <div class="table-responsive">
+                        <label>Mehrwort-Resultate</label>
+                        <table class="table table-striped" id="splitresults">
+                        </table>
                     </div>
                 </div>
             </div>
@@ -124,7 +127,7 @@
 
     function matchTD(num) {
         var matches = allmatches(num);
-        if (matches.length > 0) return "<td valign='top'><pre>" + num + "\n" + matches.join("\n") + "</pre></td>";
+        if (matches.length > 0) return "<td><pre>" + num + "\n" + matches.join("\n") + "</pre></td>";
         else return undefined;
     }
 
@@ -136,7 +139,7 @@
         round = round + 1;
         if (!num) {
             if (startTDs) {
-                var tbl = "<table border='1'><tr>" + startTDs + "</tr></table><br/>";
+                var tbl = "<tr>" + startTDs + "</tr>";
                 if (console) console.log("Created table " + tbl);
                 splitresults.append(tbl);
                 return;
