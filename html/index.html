@@ -17,6 +17,7 @@
             <em>Achtung:</em> wenn man ein Wort / eine Wortsequenz gefunden hat, sollte man noch einmal nachdenken, ob die
             Zuordnung auch wirklich stimmt: z.B. kann das Tool kein hartes g (= 7) und weiches g (= 6) unterscheiden.
             Worte mit g tauchen daher für beide Ziffern auf!
+            Bei längeren Zahlen ist
         </p>
     </div>
 </div>
@@ -40,7 +41,7 @@
                     </div>
                 </div>
                 <div class="well" id="quickstartjs">
-                    <div class="form-group"><label>Resultat</label>
+                    <div class="form-group"><label>Einzelwort-Resultat</label>
                         <pre id="result">
                             Kein Javascript aktiviert -> nix geht hier.
                         </pre>
@@ -61,6 +62,7 @@
 <script type="text/javascript">
     var datalocation = "allde.json";
     var words = [];
+    var blocked = 1;
     var patterns = {
         "0": "(x+|z+|s+(?!ch)|ß+)",
         "1": "([td]+)",
@@ -76,7 +78,7 @@
 
     var result = $("#result");
     var splitresults = $("#splitresults");
-    var round = 0;
+    var starttime = 0;
     var ignorePattern = "([aeiouäöüAEUIOÄÖÜyhéâêà.' -]*)";
     result.text("Einen Moment: Wörter werden geladen...");
     $.getJSON(datalocation, function (data) {
@@ -84,25 +86,30 @@
         $("#search").removeAttr("disabled");
         if (console) console.log("loaded " + words.length + " words.");
         result.text(words.length + " Wörter geladen.");
+        blocked = 0;
     });
 
     var errors;
 
     function search() {
+        if (blocked) return;
         errors = "";
-        result.text("");
+        result.text("Suche gestartet...");
         splitresults.text("");
-        round = 0;
-        var num = $("#num").val();
+        starttime = new Date().getTime();
+        var num = $("#num").val().trim().replace(/\s/g,"");
         if (console) console.log("Number:" + num);
-        var matchingwords = allmatches(num);
-        if ("" != errors) {
-            result.text(errors);
-        } else {
-            result.text(matchingwords.join("\n"))
-        }
+        setTimeout(function() {
+            var matchingwords = allmatches(num);
+            if ("" != errors) {
+                result.text(errors);
+            } else {
+                result.text(matchingwords.join("\n"))
+            }
 
-        searchSplits(num, " ");
+            searchSplits(num, " ");
+            blocked = 0;
+        }, 500);
     }
 
     // returns (possibly empty) array of matches or undefined, if there are no matches
@@ -132,11 +139,10 @@
     }
 
     function searchSplits(num, startTDs) {
-        if (round > 500) {
-            alert('Suchtiefe 500 überschritten - Abbruch.');
+        if (new Date().getTime() - starttime > 30000) {
+            alert('Die maximale Suchzeit von 30 Sekunden ist überschritten - Abbruch.');
             return;
         }
-        round = round + 1;
         if (!num) {
             if (startTDs) {
                 var tbl = "<tr>" + startTDs + "</tr>";
