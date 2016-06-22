@@ -10,9 +10,14 @@
 
 <div class="jumbotron">
     <div class="container text-center"><h1>Master system encoder</h1>
-                <p>Blabla.
-                </p>
-                <img style="height: 350px;" src="Mastersystem.jpg" alt="Tabelle zum Mastersystem">
+        <p>Das <a href="https://de.wikipedia.org/wiki/Major-System">Master-System / Major-System</a> ist eine
+            Gedächtnistechnik, mit der man Zahlenfolgen (wie PINs,
+            Telefonnummern und Kontonummern usw.) als leichter zu merkende Wortsequenzen kodieren kann.
+            Diese Seite stellt ein Tool zur Verfügung, mit dem man für Zahlenfolgen passende Wortsequenzen suchen kann.
+            <b>Achtung:</b> wenn man ein Wort / eine Wortsequenz gefunden hat, sollte man noch einmal nachdenken, ob die
+            Zuordnung auch wirklich stimmt: z.B. kann das Tool kein hartes g (= 7) und weiches g (= 6) unterscheiden.
+            Worte mit g tauchen daher für beide Ziffern auf!
+        </p>
     </div>
 </div>
 
@@ -37,8 +42,7 @@
                 <div class="well" id="quickstartjs">
                     <div class="form-group"><label>Resultat</label>
                         <pre id="result">
-hu
-ha
+                            Kein Javascript aktiviert -> nix geht hier.
                         </pre>
                     </div>
                     <div class="form-group" id="splitresults">
@@ -55,16 +59,16 @@ ha
     var datalocation = "allde.json"; // "somewords.json";
     var words = [];
     var patterns = {
-        "0":"(x+|z+|s+(?!ch)|ß+)",
-        "1":"([td]+)",
-        "2":"([nñ]+)",
-        "3":"(m+)",
-        "4":"(r+)",
-        "5":"(l+)",
-        "6":"(sch|ch|j+|g+)",
-        "7":"(k+|ck|g+|c+(?!h)|c+(?!h)k+|q+|x+)",
-        "8":"(f+|v+|w+|ph)",
-        "9":"([pb]+)"
+        "0": "(x+|z+|s+(?!ch)|ß+)",
+        "1": "([td]+)",
+        "2": "([nñ]+)",
+        "3": "(m+)",
+        "4": "(r+)",
+        "5": "(l+)",
+        "6": "(sch|ch|j+|g+)",
+        "7": "(k+|ck|g+|c+(?!h)|c+(?!h)k+|q+|x+)",
+        "8": "(f+|v+|w+|ph)",
+        "9": "([pb]+)"
     };
 
     var result = $("#result");
@@ -72,10 +76,10 @@ ha
     var round = 0;
     var ignorePattern = "([aeiouäöüAEUIOÄÖÜyhéâêà.' -]*)";
     result.text("Einen Moment: Wörter werden geladen...");
-    $.getJSON( datalocation, function( data ) {
+    $.getJSON(datalocation, function (data) {
         words = data;
         $("#search").removeAttr("disabled");
-        if (console) console.log("loaded " + words.length + " words." );
+        if (console) console.log("loaded " + words.length + " words.");
         result.text(words.length + " Wörter geladen.");
     });
 
@@ -102,7 +106,7 @@ ha
     function allmatches(num) {
         errors = "";
         var regex = ignorePattern;
-        $.each(num.split(""), function(idx, c) {
+        $.each(num.split(""), function (idx, c) {
             var cpattern = patterns[c];
             if (null == cpattern) errors = errors + ("Can't find pattern for " + c + "\n");
             else regex = regex + cpattern + ignorePattern;
@@ -111,14 +115,13 @@ ha
 
         var rxp = new RegExp("^" + regex + "$", "i");
         var matchingwords = [];
-        $.each(words, function(idx, word) {
-            if(rxp.test(word)) matchingwords.push(word);
+        $.each(words, function (idx, word) {
+            if (rxp.test(word)) matchingwords.push(word);
         });
-        if(console) console.log("found " + matchingwords.length + " words for " + num);
+        if (console) console.log("found " + matchingwords.length + " words for " + num);
         return matchingwords;
     }
 
-    // returns <td><pre>(matches)<pre></td>
     function matchTD(num) {
         var matches = allmatches(num);
         if (matches.length > 0) return "<td valign='top'><pre>" + num + "\n" + matches.join("\n") + "</pre></td>";
@@ -126,17 +129,20 @@ ha
     }
 
     function searchSplits(num, startTDs) {
-        if (round > 1000) { alert('1000 rounds - aborting'); return; }
+        if (round > 500) {
+            alert('Suchtiefe 500 überschritten - Abbruch.');
+            return;
+        }
         round = round + 1;
-        if(!num) {
-            if(startTDs) {
+        if (!num) {
+            if (startTDs) {
                 var tbl = "<table border='1'><tr>" + startTDs + "</tr></table>";
-                if(console) console.log("Created table " + tbl);
+                if (console) console.log("Created table " + tbl);
                 splitresults.append(tbl);
                 return;
             }
         }
-        for(var i=0; i < num.length; ++i) {
+        for (var i = 0; i < num.length; ++i) {
             var contnum = num.substring(0, num.length - i);
             var endnum = num.substring(num.length - i, num.length);
             var contTDs = matchTD(contnum);
