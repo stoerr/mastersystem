@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <title>Mastersystem encoder</title>
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.6/united/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -14,7 +14,7 @@
             Gedächtnistechnik, mit der man Zahlenfolgen (wie PINs,
             Telefonnummern und Kontonummern usw.) als leichter zu merkende Wortsequenzen kodieren kann.
             Diese Seite stellt ein Tool zur Verfügung, mit dem man für Zahlenfolgen passende Wortsequenzen suchen kann.
-            <b>Achtung:</b> wenn man ein Wort / eine Wortsequenz gefunden hat, sollte man noch einmal nachdenken, ob die
+            <em>Achtung:</em> wenn man ein Wort / eine Wortsequenz gefunden hat, sollte man noch einmal nachdenken, ob die
             Zuordnung auch wirklich stimmt: z.B. kann das Tool kein hartes g (= 7) und weiches g (= 6) unterscheiden.
             Worte mit g tauchen daher für beide Ziffern auf!
         </p>
@@ -56,7 +56,7 @@
 <script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    var datalocation = "allde.json"; // "somewords.json";
+    var datalocation = "allde.json";
     var words = [];
     var patterns = {
         "0": "(x+|z+|s+(?!ch)|ß+)",
@@ -136,7 +136,7 @@
         round = round + 1;
         if (!num) {
             if (startTDs) {
-                var tbl = "<table border='1'><tr>" + startTDs + "</tr></table>";
+                var tbl = "<table border='1'><tr>" + startTDs + "</tr></table><br/>";
                 if (console) console.log("Created table " + tbl);
                 splitresults.append(tbl);
                 return;
