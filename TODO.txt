@@ -1,6 +1,5 @@
 - en / de Umschaltung
 - Wortvarianten mit unterschiedlichen Ignored-Lauten am Ende zusammenfassen
-- Weiches G herausnehmen
 - Umkehrung: Wort zu Zahl
 - Vorverarbeitung der Worte zu einer Map, anstatt zu einem Array
 
