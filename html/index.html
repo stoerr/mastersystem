@@ -99,7 +99,6 @@
                 alert('Einen Moment - Ladeprozess läuft');
                 return;
             }
-            result.text("Einen Moment: Wörter werden geladen...");
             words = data;
             $("#search").removeAttr("disabled");
             if (console) console.log("loaded " + words.length + " words.");
@@ -113,7 +112,9 @@
     $('input[type=radio][name=language]').change(
             function() {
                 datalocation = this.value;
-                loadData();
+                result.text("Einen Moment: Wörter werden geladen...");
+                blocked = 1;
+                setTimeout(loadData, 200);
             }
     );
 
@@ -121,6 +122,7 @@
 
     function search() {
         if (blocked) return;
+        blocked = 1;
         errors = "";
         result.text("Suche gestartet...");
         splitresults.text("");
