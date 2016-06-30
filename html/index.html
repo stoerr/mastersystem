@@ -32,7 +32,11 @@
         <div class="col-sm-12 col-md-12"><h2>Kodierung einer Zahl im Master-System</h2>
 
             <div class="well text-center">
-                <div class="form-group"><label for="num">Zu kodierende Zahl:</label>
+                <div class="form-group"><label for="num"></label> In
+                    <label><input type="radio" name="language" value="allde.json" checked="checked" id="deutsch">
+                        deutsch</label> oder
+                    <label><input type="radio" name="language" value="allen.json" id="englisch"> englisch</label>
+                    zu kodierende Zahl:
 
                     <div class="input-group input-group-lg">
                         <input type="text" class="form-control"
@@ -65,9 +69,9 @@
 <script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    var datalocation = "allde.json";
     var words = [];
-    var blocked = 1;
+    var blocked = 0;
+    var initialized = 0;
     var patterns = {
         "0": "(x+|z+|s+(?!ch)|ß+)",
         "1": "([td]+)",
@@ -86,13 +90,32 @@
     var starttime = 0;
     var ignorePattern = "([aeiouäöüAEUIOÄÖÜyhéâêà.' -]*)";
     result.text("Einen Moment: Wörter werden geladen...");
-    $.getJSON(datalocation, function (data) {
-        words = data;
-        $("#search").removeAttr("disabled");
-        if (console) console.log("loaded " + words.length + " words.");
-        result.text(words.length + " Wörter geladen.");
-        blocked = 0;
-    });
+
+    var datalocation = $('input[type=radio][name=language]:checked').val();
+
+    function loadData() {
+        $.getJSON(datalocation, function (data) {
+            if (!initialized && blocked) {
+                alert('Einen Moment - Ladeprozess läuft');
+                return;
+            }
+            result.text("Einen Moment: Wörter werden geladen...");
+            words = data;
+            $("#search").removeAttr("disabled");
+            if (console) console.log("loaded " + words.length + " words.");
+            result.text(words.length + " Wörter geladen.");
+            blocked = 0;
+            initialized = 1;
+        });
+    }
+    setTimeout(loadData, 2000);
+
+    $('input[type=radio][name=language]').change(
+            function() {
+                datalocation = this.value;
+                loadData();
+            }
+    );
 
     var errors;
 
